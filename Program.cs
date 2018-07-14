@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace simpleSalesman
@@ -13,7 +13,7 @@ namespace simpleSalesman
             const float INTERIOR_CITY = 0.0F;
 		
             // Use an adjacency list to represent the connections to the nodes in the graph.
-            Graph graph = new Graph(10);
+            Graph graph = new Graph(8);
             graph.addEdge(0, new NodeData { Id=1, weight=3, features = new float[] {PERIMETER_CITY}});
             // Use the next line to show how being a perimeter city gives priority over having the least cost.
             // graph.addEdge(0, new NodeData { Id=3, weight=2, features = new float[] {PERIMETER_CITY}});
@@ -71,6 +71,14 @@ namespace simpleSalesman
             
             // Follow the path with the least cost, but stay close to the perimeter.
             FollowingMinimimWeights(start, ref visited);
+
+            // Display any unvisited nodes.
+            for (int i = 0; i < numberOfNodes; i++)
+            {
+                if (visited[i] == false)
+                    Console.Write("{0} ", i);
+            }
+            Console.Write("{0} ", start.Id);
         }
 
         // Follow the path with the least cost, but stay close to the perimeter.
@@ -78,7 +86,10 @@ namespace simpleSalesman
         {
             // base case
             if (adj[sourceNode.Id].Count == 0 || visited[sourceNode.Id] == true)
+            {
+                visited[sourceNode.Id] = true;
                 return;
+            }
 
             // initialize variables
             NodeData adjacent = new NodeData { Id=0, weight=0, features = new float[] {PERIMETER_CITY}};
