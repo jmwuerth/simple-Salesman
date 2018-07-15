@@ -13,7 +13,7 @@ namespace simpleSalesman
             const float INTERIOR_CITY = 0.0F;
 		
             // Use an adjacency list to represent the connections to the nodes in the graph.
-            Graph graph = new Graph(8);
+            Graph graph = new Graph(10);
             graph.addEdge(0, new NodeData { Id=1, weight=3, features = new float[] {PERIMETER_CITY}});
             // Use the next line to show how being a perimeter city gives priority over having the least cost.
             // graph.addEdge(0, new NodeData { Id=3, weight=2, features = new float[] {PERIMETER_CITY}});
@@ -25,6 +25,7 @@ namespace simpleSalesman
             graph.addEdge(3, new NodeData { Id=4, weight=2, features = new float[] {PERIMETER_CITY}});
             graph.addEdge(6, new NodeData { Id=4, weight=6, features = new float[] {PERIMETER_CITY}});
             graph.addEdge(4, new NodeData { Id=7, weight=3, features = new float[] {PERIMETER_CITY}});
+            graph.addEdge(6, new NodeData { Id=8, weight=9, features = new float[] {PERIMETER_CITY}});
 				
             // Find the path through the network with the least cost. 
             graph.TravelingSalesman(new NodeData { Id=0, weight=0, features = new float[] {PERIMETER_CITY}});
@@ -45,7 +46,6 @@ namespace simpleSalesman
         const float PERIMETER_CITY = 1.0F;
         const float INTERIOR_CITY = 0.0F;
         const int DESIRABLE = 0;
-        const int NOT_DESIRABLE = 1;
 
 	    private int numberOfNodes;
 	    private List<NodeData>[] adj;
@@ -74,10 +74,17 @@ namespace simpleSalesman
             FollowingMinimimWeights(start, ref visited);
 
             // Display any unvisited nodes.
+            bool firstTime = true;
             for (int i = 0; i < numberOfNodes; i++)
             {
-                if (visited[i] == false)
+                // Start at the first unvisited node and display any unvisited nodes that is is connected to.
+                if (visited[i] == false && firstTime == true && i != 0)
+                {
                     Console.Write("{0} ", i);
+                    NodeData firstUnvisitedNode = new NodeData { Id=i, weight=0, features = new float[] {PERIMETER_CITY}};
+                    FollowingMinimimWeights(firstUnvisitedNode, ref visited);
+                    firstTime = false;
+                }
             }
             Console.Write("{0} ", start.Id);
         }
@@ -100,11 +107,13 @@ namespace simpleSalesman
             // Examine each adjacent node to find the node with the least cost.
             // However, choose a node on the perimeter of the network over
             // a node that may have a lower cost.
+            bool foundUnvisitedNodes = false;
 		    for (int i = 0; i < adj[sourceNode.Id].Count; i++)
 		    {
                 adjacent = adj[sourceNode.Id][i];
 			    if (!visited[adjacent.Id])
 			    {
+                    foundUnvisitedNodes = true;
                     // Avoid undesirable cities during the traversal.
                     int category = FindCategory(adjacent.features);
                     if (category != DESIRABLE)
@@ -117,7 +126,12 @@ namespace simpleSalesman
                     }
 			    }
 			}    
-            Console.Write("{0}:{1} ", minNode.Id, minNode.weight);
+            // Only display nodes that were visited
+            if (foundUnvisitedNodes == true)
+                Console.Write("{0}:{1} ", minNode.Id, minNode.weight);
+            // If no nodes were visited, then display the sourceNode
+            if (foundUnvisitedNodes == false)
+                Console.Write("{0}:{1} ", sourceNode.Id, sourceNode.weight);
             FollowingMinimimWeights(minNode, ref visited);        
         }
 
@@ -128,9 +142,9 @@ namespace simpleSalesman
             int Category = -1;
 
             if (features[0] == PERIMETER_CITY)
-                Category = DESIRABLE;
+                Category = 0;
             else
-                Category = NOT_DESIRABLE;          
+                Category = 1;          
 
             return Category;
         }   
