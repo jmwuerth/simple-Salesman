@@ -46,6 +46,8 @@ namespace simpleSalesman
         const float PERIMETER_CITY = 1.0F;
         const float INTERIOR_CITY = 0.0F;
         const int DESIRABLE = 0;
+        const bool AVOID_INTERIOR = true;
+        const bool INCLUDE_INTERIOR = false;
 
 	    private int numberOfNodes;
 	    private List<NodeData>[] adj;
@@ -71,7 +73,7 @@ namespace simpleSalesman
 			    visited[i] = false;
             
             // Follow the path with the least cost, but stay close to the perimeter.
-            FollowingMinimimWeights(start, ref visited);
+            FollowingMinimimWeights(start, ref visited, AVOID_INTERIOR);
 
             // Display any unvisited nodes.
             bool firstTime = true;
@@ -82,7 +84,7 @@ namespace simpleSalesman
                 {
                     Console.Write("{0} ", i);
                     NodeData firstUnvisitedNode = new NodeData { Id=i, weight=0, features = new float[] {PERIMETER_CITY}};
-                    FollowingMinimimWeights(firstUnvisitedNode, ref visited);
+                    FollowingMinimimWeights(firstUnvisitedNode, ref visited, INCLUDE_INTERIOR);
                     firstTime = false;
                 }
             }
@@ -90,7 +92,7 @@ namespace simpleSalesman
         }
 
         // Follow the path with the least cost, but stay close to the perimeter.
-        public void FollowingMinimimWeights(NodeData sourceNode, ref bool[] visited)
+        public void FollowingMinimimWeights(NodeData sourceNode, ref bool[] visited, bool avoidInterior)
         {
             // base case
             if (adj[sourceNode.Id].Count == 0 || visited[sourceNode.Id] == true)
@@ -116,7 +118,7 @@ namespace simpleSalesman
                     foundUnvisitedNodes = true;
                     // Avoid undesirable cities during the traversal.
                     int category = FindCategory(adjacent.features);
-                    if (category != DESIRABLE)
+                    if (category != DESIRABLE && avoidInterior)
                         continue;
                     if (adjacent.weight < minWeight)
                     {
@@ -132,7 +134,7 @@ namespace simpleSalesman
             // If no nodes were visited, then display the sourceNode
             if (foundUnvisitedNodes == false)
                 Console.Write("{0}:{1} ", sourceNode.Id, sourceNode.weight);
-            FollowingMinimimWeights(minNode, ref visited);        
+            FollowingMinimimWeights(minNode, ref visited, avoidInterior);        
         }
 
         // A city on the perimeter of the network is desirable over a city in the 
