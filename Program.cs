@@ -45,6 +45,7 @@ namespace simpleSalesman
         const float PERIMETER_CITY = 1.0F;
         const float INTERIOR_CITY = 0.0F;
         const int DESIRABLE = 0;
+        const int NOT_DESIRABLE = 1;
 
 	    private int numberOfNodes;
 	    private List<NodeData>[] adj;
@@ -127,9 +128,9 @@ namespace simpleSalesman
             int Category = -1;
 
             if (features[0] == PERIMETER_CITY)
-                Category = 0;
+                Category = DESIRABLE;
             else
-                Category = 1;          
+                Category = NOT_DESIRABLE;          
 
             return Category;
         }   
