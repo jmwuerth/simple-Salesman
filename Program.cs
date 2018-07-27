@@ -111,11 +111,11 @@ namespace simpleSalesman
             // However, choose a node on the perimeter of the network over
             // a node that may have a lower cost.
             bool foundUnvisitedNodes = false;
-		    for (int i = 0; i < adj[sourceNode.Id].Count; i++)
-		    {
+	    for (int i = 0; i < adj[sourceNode.Id].Count; i++)
+	    {
                 adjacent = adj[sourceNode.Id][i];
-			    if (!visited[adjacent.Id])
-			    {
+	    	if (!visited[adjacent.Id])
+		{
                     foundUnvisitedNodes = true;
                     // Avoid undesirable cities during the traversal.
                     int category = FindCategory(adjacent.features);
@@ -127,14 +127,16 @@ namespace simpleSalesman
                         minWeight = adjacent.weight;
                         minNode = adj[sourceNode.Id][i];
                     }
-			    }
-			}    
+		}
+	    }    
             // Only display nodes that were visited
             if (foundUnvisitedNodes == true)
                 Console.Write("{0}:{1} ", minNode.Id, minNode.weight);
+		
             // If no nodes were visited, then display the sourceNode
             if (foundUnvisitedNodes == false)
                 Console.Write("{0}:{1} ", sourceNode.Id, sourceNode.weight);
+		
             FollowingMinimimWeights(minNode, ref visited, avoidInterior);        
         }
 
